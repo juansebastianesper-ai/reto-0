@@ -36,3 +36,6 @@ notes.db: SQLite generada con usuarios, notas y etiquetas.
 - No hacer commit ni push.
 
 ## Lecciones aprendidas
+- pytest debe estar en requirements.txt y la suite debe pasar antes de cada commit.
+- SECRET_KEY se lee siempre de una variable de entorno; nunca se genera en el código.
+- El contenido de una nota se valida con un máximo explícito; MAX_CONTENT_LENGTH no basta.
