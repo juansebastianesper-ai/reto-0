@@ -6,6 +6,7 @@ import sqlite3
 from functools import wraps
 from pathlib import Path
 
+from dotenv import load_dotenv
 from flask import (
     Flask,
     abort,
@@ -18,7 +19,6 @@ from flask import (
     url_for,
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
@@ -119,8 +119,7 @@ def login_required(view):
         if current_user() is None:
             flash("Inicia sesión para continuar.", "info")
             target = request.full_path
-            if target.endswith("?"):
-                target = target[:-1]
+            target = target.removesuffix("?")
             return redirect(url_for("login", next=target))
         return view(*args, **kwargs)
 
