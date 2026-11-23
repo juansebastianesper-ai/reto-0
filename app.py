@@ -27,6 +27,7 @@ DATABASE = Path(os.environ.get("DATABASE") or (BASE_DIR / "notes.db"))
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
 app.config["MAX_CONTENT_LENGTH"] = 2 * 1024 * 1024  # 2 MB por petición
+MAX_NOTE_CONTENT = 10_000
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS users (
@@ -235,6 +236,10 @@ def validate_note_form():
         errors.append("El título no puede superar los 200 caracteres.")
     if not content:
         errors.append("El contenido no puede estar vacío.")
+    if len(content) > MAX_NOTE_CONTENT:
+        errors.append(
+            f"El contenido no puede superar los {MAX_NOTE_CONTENT} caracteres."
+        )
     if len(tags_raw) > 500:
         errors.append("Las etiquetas no pueden superar los 500 caracteres.")
     return (
