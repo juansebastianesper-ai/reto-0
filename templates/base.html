@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Notas privadas{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="{{ url_for('index') }}">
+        <span class="brand-mark">N</span>
+        <span>Notas privadas</span>
+      </a>
+      <nav class="main-nav" aria-label="Navegación principal">
+        {% if current_user %}
+          <a href="{{ url_for('notes') }}">Mis notas</a>
+          <a class="btn btn-small" href="{{ url_for('new_note') }}">+ Nueva nota</a>
+          <form class="inline-form" method="post" action="{{ url_for('logout') }}">
+            <button class="btn btn-ghost btn-small" type="submit">Cerrar sesión</button>
+          </form>
+        {% else %}
+          <a href="{{ url_for('login') }}">Iniciar sesión</a>
+          <a class="btn btn-small" href="{{ url_for('register') }}">Registrarse</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="container main">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-stack">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}" role="alert">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="container footer">
+    Tus notas son privadas y solo tú puedes verlas.
+  </footer>
+</body>
+</html>

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Mis notas · Notas privadas{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <div>
+    <h1>Mis notas</h1>
+    <p class="muted">Busca, organiza y recupera tus ideas.</p>
+  </div>
+  <a class="btn" href="{{ url_for('new_note') }}">+ Nueva nota</a>
+</section>
+
+<section class="card filters">
+  <form class="search-form" method="get" action="{{ url_for('notes') }}">
+    <input type="search" name="q" value="{{ q }}" placeholder="Buscar por título, contenido o etiqueta…" aria-label="Buscar notas">
+    {% if tag %}<input type="hidden" name="tag" value="{{ tag }}">{% endif %}
+    <button class="btn" type="submit">Buscar</button>
+  </form>
+
+  <div class="tag-cloud">
+    <span class="muted">Etiquetas:</span>
+    <a class="chip {% if not tag %}chip-active{% endif %}" href="{{ url_for('notes', q=q) }}">Todas</a>
+    {% for item in tags %}
+      <a class="chip {% if tag == item['name'] %}chip-active{% endif %}" href="{{ url_for('notes', q=q, tag=item['name']) }}">
+        #{{ item['name'] }} <span class="chip-count">{{ item['count'] }}</span>
+      </a>
+    {% endfor %}
+  </div>
+
+  {% if q or tag %}
+    <p class="active-filters">
+      Filtros activos:
+      {% if q %}<strong>«{{ q }}»</strong>{% endif %}
+      {% if q and tag %} · {% endif %}
+      {% if tag %}<strong>#{{ tag }}</strong>{% endif %}
+      <a href="{{ url_for('notes') }}">Limpiar</a>
+    </p>
+  {% endif %}
+</section>
+
+{% if notes %}
+  <div class="notes-grid">
+    {% for item in notes %}
+      <article class="card note-card">
+        <div class="note-card-top">
+          <h2><a href="{{ url_for('note_detail', note_id=item['note']['id']) }}">{{ item['note']['title'] }}</a></h2>
+          <time datetime="{{ item['note']['updated_at'] }}">{{ item['note']['updated_at'] }}</time>
+        </div>
+        <p class="note-excerpt">{{ item['note']['content']|truncate(180, true) }}</p>
+        {% if item['tags'] %}
+          <div class="chip-row">
+            {% for name in item['tags'] %}
+              <a class="chip chip-mini" href="{{ url_for('notes', tag=name) }}">#{{ name }}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
+        <div class="note-actions">
+          <a href="{{ url_for('note_detail', note_id=item['note']['id']) }}">Ver</a>
+          <a href="{{ url_for('edit_note', note_id=item['note']['id']) }}">Editar</a>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card empty-state">
+    <h2>No hay notas</h2>
+    <p class="muted">Crea tu primera nota o prueba con otros filtros.</p>
+    <a class="btn" href="{{ url_for('new_note') }}">Crear una nota</a>
+  </div>
+{% endif %}
+{% endblock %}

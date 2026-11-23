@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}{{ note['title'] }} · Notas privadas{% endblock %}
+
+{% block content %}
+<article class="card note-detail">
+  <p class="note-meta">
+    Creada {{ note['created_at'] }} · Actualizada {{ note['updated_at'] }}
+  </p>
+  <h1>{{ note['title'] }}</h1>
+
+  {% if tags %}
+    <div class="chip-row">
+      {% for name in tags %}
+        <a class="chip" href="{{ url_for('notes', tag=name) }}">#{{ name }}</a>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="note-content">{{ note['content'] }}</div>
+
+  <div class="detail-actions">
+    <a class="btn" href="{{ url_for('edit_note', note_id=note['id']) }}">Editar</a>
+    <form method="post" action="{{ url_for('delete_note', note_id=note['id']) }}" onsubmit="return confirm('¿Eliminar esta nota?');">
+      <button class="btn btn-danger" type="submit">Eliminar</button>
+    </form>
+    <a class="btn btn-ghost" href="{{ url_for('notes') }}">Volver</a>
+  </div>
+</article>
+{% endblock %}
